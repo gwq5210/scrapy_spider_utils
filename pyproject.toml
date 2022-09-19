@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "spider_utils"
+name = "scrapy_spider_utils"
 version = "0.0.1"
 description = "scrapy爬虫的一些工具类"
 authors = ["gwq5210 <gwq5210@qq.com>"]

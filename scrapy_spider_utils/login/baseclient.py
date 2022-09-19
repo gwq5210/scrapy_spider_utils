@@ -1,7 +1,7 @@
 import os
 import pickle
 import requests
-from spider_utils.login.douban_login import douban
+from scrapy_spider_utils.login.douban_login import douban
 
 
 '''基类客户端'''

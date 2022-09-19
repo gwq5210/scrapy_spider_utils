@@ -1,6 +1,6 @@
 import requests
 import logging
-from spider_utils.login.baseclient import BaseClient
+from scrapy_spider_utils.login.baseclient import BaseClient
 
 
 '''豆瓣客户端'''

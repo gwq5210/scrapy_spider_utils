@@ -1,4 +1,4 @@
-from spider_utils.mirai_client import MiraiClient
+from scrapy_spider_utils.mirai_client import MiraiClient
 import os
 import sys
 import pprint
