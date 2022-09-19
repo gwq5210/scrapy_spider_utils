@@ -13,28 +13,28 @@ ESDupeFilterTV = TypeVar("ESDupeFilterTV", bound="ESDupeFilter")
 class ESDupeFilter(BaseDupeFilter):
     """Request ES duplicates filter"""
 
-    def __init__(self, es_uri: Optional[str] = None, es_index: Optional[str] = None, debug: bool = False) -> None:
-        self.es_uri = "localhost:9200"
+    def __init__(self, es_url: Optional[str] = None, es_index: Optional[str] = None, debug: bool = False) -> None:
+        self.es_url = "localhost:9200"
         self.es_index = None
         self.logdupes = True
         self.es_client = None
         self.debug = debug
         self.logger = logging.getLogger(__name__)
-        if es_uri:
-            self.es_uri = es_uri
+        if es_url:
+            self.es_url = es_url
         if es_index:
             self.es_index = es_index
         else:
             self.logger.error("es_index not specified! filter is not enabled!")
-        if self.es_uri and self.es_index:
-            self.es_client = Elasticsearch([self.es_uri])
+        if self.es_url and self.es_index:
+            self.es_client = Elasticsearch([self.es_url])
 
     @classmethod
     def from_settings(cls: Type[ESDupeFilterTV], settings: BaseSettings) -> ESDupeFilterTV:
         debug = settings.getbool('DUPEFILTER_DEBUG')
-        es_uri = settings.get('ES_URI')
-        es_index = settings.get('ES_INDEX')
-        return cls(es_uri, es_index, debug)
+        es_url = settings.get('ES_URL')
+        es_index = settings.get('ES_INDEX_NAME')
+        return cls(es_url, es_index, debug)
 
     def is_request_dup(self, request: Request, res) -> bool:
         return res and "found" in res and res["found"]
@@ -51,7 +51,7 @@ class ESDupeFilter(BaseDupeFilter):
         if request.cb_kwargs and 'id' in request.cb_kwargs:
             return request.cb_kwargs['id']
         else:
-            self.logger.warning('Request cb_kwargs not found "id" argument, do not filter.')
+            self.logger.warning(f'Request[{request.url}] cb_kwargs not found "id" argument, do not filter.')
             return ''
 
     def close(self, reason: str) -> None:

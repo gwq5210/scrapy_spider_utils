@@ -1,17 +1,13 @@
 [tool.poetry]
-name = "nonebot_adapter_mirai2"
-version = "0.0.17"
-description = "兼容 MiraiApiHttp2.x 的 nonebot2_adapter"
-authors = ["ieew <i@ieew.cc>"]
+name = "spider_utils"
+version = "0.0.1"
+description = "scrapy爬虫的一些工具类"
+authors = ["gwq5210 <gwq5210@qq.com>"]
 license = "AGPL-3.0"
-
-packages = [
-  { include = "nonebot" }
-]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0.0"
-nonebot2 = "^2.0.0-beta.4"
+fake-useragent = ">=0.1.11"
 
 [tool.poetry.dev-dependencies]
 

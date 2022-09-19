@@ -1,13 +1,3 @@
-'''
-Function:
-    豆瓣模拟登录
-Author:
-    Charles
-微信公众号:
-    Charles的皮卡丘
-更新日期:
-    2022-04-23
-'''
 import os
 import re
 import time

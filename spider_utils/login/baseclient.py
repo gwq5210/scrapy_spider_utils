@@ -1,25 +1,19 @@
-'''
-Function:
-    基类客户端
-Author:
-    Charles
-微信公众号:
-    Charles的皮卡丘
-'''
 import os
 import pickle
 import requests
-from douban_login import douban
+from spider_utils.login.douban_login import douban
 
 
 '''基类客户端'''
 class BaseClient():
-    def __init__(self, website_name=None, reload_history=True, auto_cache_history=True, **kwargs):
+    def __init__(self, website_name=None, reload_history=True, auto_cache_history=True, history_path=None, **kwargs):
         self.supported_apis = {
             'douban': douban().login
         }
         assert website_name in self.supported_apis
-        self.rootdir = os.path.split(os.path.abspath(__file__))[0]
+        self.rootdir = history_path
+        if not self.rootdir:
+            self.rootdir = os.getcwd()
         self.website_name = website_name
         self.reload_history = reload_history
         self.auto_cache_history = auto_cache_history

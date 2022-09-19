@@ -10,7 +10,6 @@ import logging
 from itemadapter import ItemAdapter
 from elasticsearch import Elasticsearch
 from http import HTTPStatus
-from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +72,10 @@ class ESWriterPipeline:
                 item["first_crawl_time"] = res["_source"]["first_crawl_time"]
             else:
                 item["first_crawl_time"] = 0
-        now_time = int(datetime.now().timestamp())
+    
+    def set_msg_sended(self, res, item):
+        if 'status' in res and res['status'] == HTTPStatus.NOT_FOUND:
+            return
         if "msg_sended" in item.fields and res["found"] and "msg_sended" in res["_source"]:
             item["msg_sended"] = res["_source"]["msg_sended"]
 
@@ -83,6 +85,7 @@ class ESWriterPipeline:
         res = self.es_client.get(id=item["id"], ignore=[HTTPStatus.NOT_FOUND])
         spider.logger.debug(f'es get {res}')
         self.set_crawl_time(res, item)
+        self.set_msg_sended(res, item)
         res = self.es_client.index(id=item["id"], body=ItemAdapter(item).asdict())
         spider.logger.debug(f'es index {res}')
         return item

@@ -1,16 +1,6 @@
-'''
-Function:
-    豆瓣客户端
-Author:
-    Charles
-微信公众号:
-    Charles的皮卡丘
-更新日期:
-    2022-03-11
-'''
 import requests
 import logging
-from baseclient import BaseClient
+from spider_utils.login.baseclient import BaseClient
 
 
 '''豆瓣客户端'''
