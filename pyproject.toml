@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "scrapy_spider_utils"
-version = "0.0.1"
+version = "0.0.5"
 description = "scrapy爬虫的一些工具类"
 authors = ["gwq5210 <gwq5210@qq.com>"]
 license = "AGPL-3.0"
@@ -8,6 +8,9 @@ license = "AGPL-3.0"
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0.0"
 fake-useragent = ">=0.1.11"
+elasticsearch = "7.15.0"
+scrapy = ">=2.5.1"
+requests = ">=2.28"
 
 [tool.poetry.dev-dependencies]
 
