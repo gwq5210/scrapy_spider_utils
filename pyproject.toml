@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "scrapy_spider_utils"
-version = "0.0.5"
+version = "0.0.6"
 description = "scrapy爬虫的一些工具类"
 authors = ["gwq5210 <gwq5210@qq.com>"]
 license = "AGPL-3.0"
