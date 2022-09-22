@@ -4,6 +4,7 @@ version = "0.0.6"
 description = "scrapy爬虫的一些工具类"
 authors = ["gwq5210 <gwq5210@qq.com>"]
 license = "AGPL-3.0"
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0.0"

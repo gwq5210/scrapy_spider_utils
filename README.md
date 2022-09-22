@@ -14,9 +14,11 @@ python3 -m
 
 此时在当前目录我们会看到以下：
 
+```text
 dist/
   example_pkg_your_username-0.0.1-py3-none-any.whl
   example_pkg_your_username-0.0.1.tar.gz
+```
 
 - 使用 twine 将打包好的库/项目上传到PYPI
 
@@ -25,7 +27,6 @@ dist/
 ```sh
 python3 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 ```
-
 
 我们会看到如下界面：
 
@@ -72,11 +73,10 @@ Successfully installed example-pkg-your-username-0.0.1
 
 - 【重头戏】将库上传到 PYPI正式服
 
+```sh
 twine upload dist/*
-上传成功后该库即可直接pip安装
+```
 
-上传PYPI示例库
-LZC6244/maida
-​github.com/LZC6244/maida
+上传成功后该库即可直接pip安装
 
 如果对目录结构或者其他有什么不清楚的可以参考我这个库（结构较简单适合初学者），或者我们平时使用的库（譬如本人平时经常使用 scrapy 也可以去 scrapy 主页参考大佬的写法）
