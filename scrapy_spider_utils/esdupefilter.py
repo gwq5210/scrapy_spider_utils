@@ -13,28 +13,33 @@ ESDupeFilterTV = TypeVar("ESDupeFilterTV", bound="ESDupeFilter")
 class ESDupeFilter(BaseDupeFilter):
     """Request ES duplicates filter"""
 
-    def __init__(self, es_url: Optional[str] = None, es_index: Optional[str] = None, debug: bool = False) -> None:
-        self.es_url = "localhost:9200"
-        self.es_index = None
+    def __init__(self, es_url: Optional[str] = None, es_index_name: Optional[str] = None, debug: bool = False, **kwargs) -> None:
+        self.es_url = "http://localhost:9200"
+        self.es_index_name = None
         self.logdupes = True
         self.es_client = None
         self.debug = debug
         self.logger = logging.getLogger(__name__)
         if es_url:
             self.es_url = es_url
-        if es_index:
-            self.es_index = es_index
+        if es_index_name:
+            self.es_index_name = es_index_name
         else:
-            self.logger.error("es_index not specified! filter is not enabled!")
-        if self.es_url and self.es_index:
-            self.es_client = Elasticsearch([self.es_url])
+            self.logger.error("es_index_name not specified! filter is not enabled!")
+        if self.es_url and self.es_index_name:
+            self.es_client = Elasticsearch([self.es_url], **kwargs)
 
     @classmethod
     def from_settings(cls: Type[ESDupeFilterTV], settings: BaseSettings) -> ESDupeFilterTV:
-        debug = settings.getbool('DUPEFILTER_DEBUG')
-        es_url = settings.get('ES_URL')
-        es_index = settings.get('ES_INDEX_NAME')
-        return cls(es_url, es_index, debug)
+        debug = settings.getbool('DUPEFILTER_DEBUG', False)
+        es_url = settings.get('ES_URL', 'http://localhost:9200')
+        es_index_name = settings.get('ES_INDEX_NAME')
+        es_user = settings.get('ES_USER', '')
+        es_password = settings.get('ES_PASSWORD', '')
+        http_auth = None
+        if es_user or es_password:
+            http_auth = (es_user, es_password)
+        return cls(es_url, es_index_name, debug, http_auth=http_auth)
 
     def is_request_dup(self, request: Request, res) -> bool:
         return res and "found" in res and res["found"]
@@ -42,8 +47,12 @@ class ESDupeFilter(BaseDupeFilter):
     def request_seen(self, request: Request) -> bool:
         fp = self.request_fingerprint(request)
         if fp and self.es_client:
-            res = self.es_client.get(index=self.es_index, id=fp, ignore=[HTTPStatus.NOT_FOUND])
-            return self.is_request_dup(request, res)
+            try:
+                res = self.es_client.get(index=self.es_index_name, id=fp, ignore=[HTTPStatus.NOT_FOUND])
+                return self.is_request_dup(request, res)
+            except Exception as e:
+                self.logger.error(f'request {fp} failed, exception: {e}')
+                return False
         else:
             return False
 
