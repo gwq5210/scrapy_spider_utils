@@ -97,7 +97,7 @@ if __name__ == '__main__':
     logger.addHandler(sh)
     sender = 2423087292
     api_key = ''
-    api_url = "https://gwq5210.com/mirai"
+    api_url = "https://gwq5210.com/api/mirai"
     recipients = [457781132]
     client = MiraiClient(sender, api_key, api_url)
     client.send_text_msg(recipients, 'hello world')

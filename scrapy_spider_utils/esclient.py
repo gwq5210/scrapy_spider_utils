@@ -9,8 +9,8 @@ logger = logging.getLogger(__name__)
 
 
 class ESClient(Elasticsearch):
-    def __init__(self, index_name, url = ['http://localhost:9200'], index_mapping_file = 'mapping.json', package_name = ''):
-        super().__init__(url)
+    def __init__(self, index_name, url = ['http://localhost:9200'], index_mapping_file = 'mapping.json', package_name = '', *args, **kwargs):
+        super().__init__(url, *args, **kwargs)
         self.url = url
         self.index_name = index_name
         self.index_mapping_file = index_mapping_file
@@ -22,8 +22,17 @@ class ESClient(Elasticsearch):
         es_url = settings.get('ES_URL', 'http://localhost:9200')
         index_name = settings.get('ES_INDEX_NAME')
         index_mapping_file = settings.get('ES_INDEX_MAPPING_FILE_NAME', 'mapping.json')
+        es_user = settings.get('ES_USER', '')
+        es_password = settings.get('ES_PASSWORD', '')
+        http_auth = None
+        if es_user or es_password:
+            http_auth = (es_user, es_password)
         package_name = settings.get('BOT_NAME', '')
-        es_client = cls(index_name, [es_url], index_mapping_file, package_name)
+        es_client = None
+        if http_auth:
+            es_client = cls(index_name, [es_url], index_mapping_file, package_name, http_auth=http_auth)
+        else:
+            es_client = cls(index_name, [es_url], index_mapping_file, package_name)
         return es_client
 
     def get(self, id, **kwargs):
@@ -59,7 +68,8 @@ class ESClient(Elasticsearch):
 
 if __name__ == '__main__':
     index_name = "douban_house"
-    url = "https://gwq5210.com/es"
-    es_client = Elasticsearch([url])
+    url = "https://gwq5210.com/api/es"
+    http_auth = ('gwq5210', '')
+    es_client = Elasticsearch([url], http_auth=http_auth)
     doc = es_client.get(index=index_name, id="274839322")
     print(doc)
