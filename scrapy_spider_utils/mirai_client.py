@@ -14,6 +14,7 @@ class MiraiClient:
         self.api_url = api_url
         if not api_url.endswith("/"):
             self.api_url += "/"
+        self.verify = False
         self.sender = int(sender)
         self.api_key = api_key
         self.session = ''
@@ -53,7 +54,7 @@ class MiraiClient:
     def bind(self):
         res = requests.post(self.verify_url, json={
             'verifyKey': self.api_key
-        })
+        }, verify=self.verify)
         res_json = self.process_res(res)
         if not res_json:
             return False
@@ -61,7 +62,7 @@ class MiraiClient:
         res = requests.post(self.bind_url, json={
             'sessionKey': self.session,
             'qq': self.sender,
-        })
+        }, verify=self.verify)
         if not self.process_res(res):
             return False
 
@@ -69,7 +70,7 @@ class MiraiClient:
         res = requests.post(self.release_url, json={
             'sessionKey': self.session,
             'qq': self.sender,
-        })
+        }, verify=self.verify)
         self.process_res(res)
 
     def send_text_msg(self, recipients, msg):
@@ -86,7 +87,7 @@ class MiraiClient:
             "messageChain": [
                 {"type": "Plain", "text": msg},
             ]
-        })
+        }, verify=self.verify)
         res_json = self.process_res(res)
         logger.info(f'client_send_text_msg({msg}) to ({recipient}) {res_json}')
 
