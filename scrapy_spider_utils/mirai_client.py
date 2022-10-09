@@ -14,7 +14,7 @@ class MiraiClient:
         self.api_url = api_url
         if not api_url.endswith("/"):
             self.api_url += "/"
-        self.verify = False
+        self.verify = True
         self.sender = int(sender)
         self.api_key = api_key
         self.session = ''
@@ -97,8 +97,8 @@ if __name__ == '__main__':
     logger.setLevel(logging.DEBUG)
     logger.addHandler(sh)
     sender = 2423087292
-    api_key = ''
-    api_url = "https://gwq5210.com/api/mirai"
+    api_key = 'a123456789'
+    api_url = "https://mirai.gwq5210.com"
     recipients = [457781132]
     client = MiraiClient(sender, api_key, api_url)
     client.send_text_msg(recipients, 'hello world')
