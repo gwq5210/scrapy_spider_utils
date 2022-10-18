@@ -59,8 +59,10 @@ class ESDupeFilter(BaseDupeFilter):
     def request_fingerprint(self, request: Request) -> str:
         if request.cb_kwargs and 'id' in request.cb_kwargs:
             return request.cb_kwargs['id']
+        elif request.cb_kwargs and 'item' in request.cb_kwargs and 'id' in request.cb_kwargs['item']:
+            return request.cb_kwargs['item']['id']
         else:
-            self.logger.warning(f'Request[{request.url}] cb_kwargs not found "id" argument, do not filter.')
+            self.logger.warning(f'Request[{request.url}] cb_kwargs not found "id" or "item" argument, do not filter.')
             return ''
 
     def close(self, reason: str) -> None:

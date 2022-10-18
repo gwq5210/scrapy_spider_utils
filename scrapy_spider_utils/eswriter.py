@@ -8,6 +8,7 @@
 from itemadapter import ItemAdapter
 from http import HTTPStatus
 from scrapy_spider_utils.esclient import ESClient
+from datetime import datetime
 
 
 class ESWriterPipeline:
@@ -24,28 +25,31 @@ class ESWriterPipeline:
     def close_spider(self, spider):
         pass
 
-    def set_crawl_time(self, res, item):
+    def set_crawl_time(self, res, item, spider):
         if 'status' in res and res['status'] == HTTPStatus.NOT_FOUND:
             return
+        now_time = int(datetime.now().timestamp())
         if "first_crawl_time" in item.fields:
-            if res["found"] and "first_crawl_time" in res["_source"]:
+            if res["found"] and "first_crawl_time" in res["_source"] and res["_source"]["first_crawl_time"] != 0:
                 item["first_crawl_time"] = res["_source"]["first_crawl_time"]
             else:
-                item["first_crawl_time"] = 0
-    
-    def set_msg_sended(self, res, item):
-        if 'status' in res and res['status'] == HTTPStatus.NOT_FOUND:
-            return
-        if "msg_sended" in item.fields and res["found"] and "msg_sended" in res["_source"]:
-            item["msg_sended"] = res["_source"]["msg_sended"]
+                item["first_crawl_time"] = now_time
+        if "crawl_time" in item.fields:
+            item["crawl_time"] = now_time
+
+    def before_write_impl(self, res, item, spider):
+        self.set_crawl_time(res, item, spider)
+        self.before_write(res, item, spider)
+
+    def before_write(self, res, item, spider):
+        pass
 
     def process_item(self, item, spider):
         if not self.es_client or "id" not in item.keys():
             return item
         res = self.es_client.get(id=item["id"], ignore=[HTTPStatus.NOT_FOUND])
         spider.logger.debug(f'es get {res}')
-        self.set_crawl_time(res, item)
-        self.set_msg_sended(res, item)
+        self.before_write_impl(res, item, spider)
         res = self.es_client.index(id=item["id"], body=ItemAdapter(item).asdict())
         spider.logger.debug(f'es index {res}')
         return item
